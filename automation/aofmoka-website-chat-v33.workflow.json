@@ -1,0 +1,114 @@
+{
+  "name": "AOFMOKA WEBSITE CHAT V34",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aofmoka-website-chat-v34",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "f2f85c48-0c5f-4a9a-aac9-ae03fc2ea027",
+      "name": "Website Chat Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -520,
+        0
+      ],
+      "webhookId": "aofmoka-website-chat-v34"
+    },
+    {
+      "parameters": {
+        "jsCode": "const request = $input.first().json || {};\nconst headers = request.headers || {};\nconst origin = String(headers.origin || '').trim();\nconst allowedOrigins = new Set(['https://tootooki.github.io']);\nif (!allowedOrigins.has(origin)) throw new Error('Origin not allowed');\n\nlet payload = request.body ?? request;\nif (typeof payload === 'string') {\n  try { payload = JSON.parse(payload); } catch { throw new Error('Invalid request body'); }\n}\nif (!payload || typeof payload !== 'object' || Array.isArray(payload)) throw new Error('Invalid request body');\n\nconst email = String(payload.email || '').trim().toLowerCase();\nconst topic = String(payload.topic || '').trim();\nconst message = String(payload.message || '').trim().slice(0, 1000);\nconst product = String(payload.product || '').trim().slice(0, 100);\nconst company = String(payload.company || '').trim();\nconst page = String(payload.page || '').trim();\nconst startedAt = Number(payload.startedAt || 0);\nconst now = Date.now();\nconst topics = { design: 'Find a design', size: 'Size help', updates: 'New drops', chat: 'Chat' };\n\nif (company) throw new Error('Spam rejected');\nif (!topics[topic]) throw new Error('Invalid topic');\nif (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) || email.length > 254) throw new Error('Invalid email');\nif (!page.startsWith('https://tootooki.github.io/aofmoka-product-website-v34/')) throw new Error('Invalid page');\nif (!Number.isFinite(startedAt) || startedAt <= 0 || now - startedAt < 800 || now - startedAt > 86400000) throw new Error('Invalid timing');\n\nconst telegramText = [\n  'AOFMOKA WEBSITE CHAT',\n  'Topic: ' + topics[topic],\n  'Product: ' + (product || 'Not selected'),\n  'Message: ' + (message || 'No message'),\n  'Email: ' + email,\n  'Page: ' + page,\n  'Received: ' + new Date(now).toISOString(),\n].join('\\n');\n\nreturn [{ json: { email, topic, topicLabel: topics[topic], message, product, page, telegramText } }];"
+      },
+      "id": "86036c25-40f8-4ee9-9cb4-61eca3929206",
+      "name": "Validate and Format",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -280,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "-1004473190383",
+        "text": "={{ $json.telegramText }}",
+        "additionalFields": {
+          "message_thread_id": 516,
+          "appendAttribution": false,
+          "disable_web_page_preview": true
+        }
+      },
+      "id": "7921d486-6610-427f-bfe9-187f862870b1",
+      "name": "Send to Website Topic",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -20,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, received: true } }}",
+        "options": {}
+      },
+      "id": "88be1cc2-19ab-4bbf-9207-31d2d7c550f6",
+      "name": "Respond Received",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Website Chat Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate and Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate and Format": {
+      "main": [
+        [
+          {
+            "node": "Send to Website Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Website Topic": {
+      "main": [
+        [
+          {
+            "node": "Respond Received",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "pinData": {}
+}

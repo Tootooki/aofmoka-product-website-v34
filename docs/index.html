@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AOFMOKA — Wear the Impossible</title>
+    <meta name="description" content="Explore AOFMOKA UV-reactive wearable art and purchase the exact design securely on Amazon." />
+    <meta property="og:title" content="AOFMOKA — Wear the Impossible" />
+    <meta property="og:description" content="UV-reactive wearable art. Explore the collection and shop the exact design on Amazon." />
+    <meta property="og:image" content="https://tootooki.github.io/aofmoka-product-website-v34/og.png" />
+    <link rel="icon" href="./favicon.svg" />
+    <link rel="stylesheet" href="./styles.css?v=21" />
+    <link rel="stylesheet" href="./dock.css?v=1" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="header-bar" href="#top" aria-label="AOFMOKA home">
+        <span class="header-logo"><img src="./brand/aofmoka-color-symbols-no-text.png" alt="AOFMOKA" /></span>
+      </a>
+    </header>
+
+    <main id="top">
+      <section class="collection" id="collection" aria-label="AOFMOKA product collection">
+        <div class="product-grid" id="product-grid" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <div class="living-dock">
+      <button type="button" class="dock-teaser" aria-label="Join AOFMOKA new drop updates">new drops?</button>
+
+      <div id="aofmoka-dock-panel" class="dock-panel dock-panel-chat" role="dialog" aria-label="AOFMOKA chat" aria-hidden="true" hidden></div>
+
+      <button type="button" class="dock-launcher" aria-label="Open AOFMOKA chat" aria-expanded="false" aria-controls="aofmoka-dock-panel">
+        <span class="dock-emblem" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <script src="./products.js?v=6"></script>
+    <script src="./app.js?v=14"></script>
+  </body>
+</html>
