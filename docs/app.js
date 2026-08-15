@@ -1,6 +1,7 @@
 const { amazonLink, products, sizes } = window.AOFMOKA;
 
 const CHAT_ENDPOINT = "https://n8n.fasfsdafasfasfasf.space/webhook/aofmoka-website-chat-v34";
+const CHAT_HANDOFF_ACTIVE = false;
 const DOCK_EXIT_MS = 220;
 const AUTO_REPLY_MS = 420;
 
@@ -183,6 +184,11 @@ function renderChatDock() {
 
   emailForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (!CHAT_HANDOFF_ACTIVE) {
+      messages.push({ from: "aofmoka", text: "email replies are being connected. please try again soon." });
+      renderMessages();
+      return;
+    }
     const submitButton = emailForm.querySelector("button");
     submitButton.disabled = true;
     submitButton.textContent = "...";

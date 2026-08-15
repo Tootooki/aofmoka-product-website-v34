@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from "react"
 import { amazonLink, productSizes, type Product } from "./products";
 
 const CHAT_ENDPOINT = "https://n8n.fasfsdafasfasfasf.space/webhook/aofmoka-website-chat-v34";
+const CHAT_HANDOFF_ACTIVE = false;
 const DOCK_EXIT_MS = 220;
 const AUTO_REPLY_MS = 420;
 
@@ -123,6 +124,13 @@ export function LivingDock({ product, onDismissProduct }: { product: Product | n
   const submitEmail = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (status === "sending") return;
+    if (!CHAT_HANDOFF_ACTIVE) {
+      setMessages((current) => [
+        ...current,
+        { id: messageId.current++, from: "aofmoka", text: "email replies are being connected. please try again soon." },
+      ]);
+      return;
+    }
     setStatus("sending");
     const honeypot = new FormData(event.currentTarget).get("company");
     try {
